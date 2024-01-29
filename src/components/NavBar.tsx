@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { UploadContext } from "../UploadContext";
 
 const NavBar = () => {
-  const isAdmin = true;
+  const isAdmin = false;
   const [uploadFile, setUploadFile] = useState<File>();
   const {setIsUploadSuccess} = useContext(UploadContext);
 
