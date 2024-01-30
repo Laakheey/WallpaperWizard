@@ -2,7 +2,7 @@ import { getDownloadURL, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { storage } from "../firebaseConfig";
 import { useParams } from "react-router-dom";
-import ImageCropper from "./ImageCropper";
+import { ImageCropper } from "./";
 
 const ShowImage = () => {
   const [wallpaper, setWallpaper] = useState<string>();

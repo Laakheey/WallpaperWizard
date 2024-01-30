@@ -1,10 +1,7 @@
 import { useState } from "react";
-import FetchImage from "./components/FetchImage";
-import NavBar from "./components/NavBar";
 import { UploadContext } from "./UploadContext";
 import { Route, Routes } from "react-router-dom";
-import UploadWallpaper from "./components/UploadWallpaper";
-import ShowImage from "./components/ShowImage";
+import { NavBar, FetchImage, UploadWallpaper, ShowImage } from "./components";
 
 function App() {
   const [isUploadSuccess, setIsUploadSuccess] = useState(false);
@@ -20,6 +17,7 @@ function App() {
             )
           }
           <Route path="/show-image/:id" element={<ShowImage />} />
+          <Route path="*" element={<FetchImage />} />
         </Routes>
       </UploadContext.Provider>
     </>
