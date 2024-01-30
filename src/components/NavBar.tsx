@@ -1,21 +1,8 @@
-import { ref, uploadBytes } from "firebase/storage";
-import { useContext, useState } from "react";
-import { storage } from "../firebaseConfig";
-import { v4 } from 'uuid';
-import { UploadContext } from "../UploadContext";
+// import { useContext, useState } from "react";
+// import { UploadContext } from "../UploadContext";
 
 const NavBar = () => {
-  const isAdmin = false;
-  const [uploadFile, setUploadFile] = useState<File>();
-  const {setIsUploadSuccess} = useContext(UploadContext);
-
-  const handleUpload = () => {
-    if(!uploadFile) return;
-    const imageRef = ref(storage, `images/${v4()}`);
-    uploadBytes(imageRef, uploadFile).then(() => {
-      setIsUploadSuccess(true)
-    });
-  }
+  // const { setIsUploadSuccess } = useContext(UploadContext);
 
   return (
     <nav className="bg-gray-800">
@@ -43,31 +30,6 @@ const NavBar = () => {
             />
           </button>
         </div>
-
-        {
-          isAdmin && (
-            <div className="mr-8 flex flex-wrap">
-            <input
-              type="file"
-              placeholder="Search"
-              onChange={(event) => {
-                const selectedFile = event.target.files?.[0];
-                if (selectedFile) {
-                  setUploadFile(selectedFile);
-                }
-              }}
-            />
-            <button 
-              onClick={handleUpload}
-              className="bg-blue-600 px-3 active:bg-blue-400 ease"
-            >
-              Upload
-            </button>
-          </div>
-          )
-        }
-
-
       </div>
     </nav>
   );
