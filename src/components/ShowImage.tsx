@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { ImageCropper } from "./";
+import { useNavigate, useParams } from "react-router-dom";
 import { WallpaperType } from "./WallpaperImage";
 import PreviewImage from "./PreviewImage";
 
@@ -9,6 +8,8 @@ const ShowImage = () => {
   const [loading, setLoading] = useState(true);
   const [previewWallpaper, setPreviewWallpaper] = useState(false);
   const { id } = useParams();
+
+  const navigate = useNavigate();
 
   const fetchImageUrl =
     "https://wallpaper-wizard-backend.onrender.com/api/wallpaper/get-wallpaper-by-id";
@@ -92,7 +93,7 @@ const ShowImage = () => {
               <button
                 className="border px-3 h-12 rounded-md bg-orange-600 text-slate-200"
                 onClick={() => {
-                  <ImageCropper src={wallpaper?.imageUri} />;
+                  navigate(`/crop-wallpaper/${id}`)
                 }}
               >
                 Crop Wallpaper
