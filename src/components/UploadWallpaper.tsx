@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { UploadContext } from "../UploadContext";
-import { ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebaseConfig";
 import { v4 } from "uuid";
 
@@ -8,14 +8,43 @@ const UploadWallpaper = () => {
   const [uploadFile, setUploadFile] = useState<File | null>();
   const [uploadFileName, setUploadFileName] = useState<string>('');
   const { setIsUploadSuccess } = useContext(UploadContext);
+  const serverUri = "https://wallpaper-wizard-backend.onrender.com/api/wallpaper/post-wallpaper";
 
   const handleUpload = () => {
-    if (!uploadFile) return;
-    const imageRef = ref(storage, `images/${uploadFileName}-GUID-${v4()}`);
-    uploadBytes(imageRef, uploadFile).then(() => {
+    if (!uploadFile || !uploadFileName) return;
+
+    const imageRef = ref(storage, `images/${v4()}`);
+    uploadBytes(imageRef, uploadFile).then((imageUrl) => {
+      getDownloadURL(imageUrl.ref).then((url: string) => {
+        let postData = {
+          title: uploadFileName,
+          imageUri: url
+        }
+        const requestOptions = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(postData)
+        };
+
+        fetch(serverUri, requestOptions)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('POST request successful:', data);
+        })
+        .catch(error => {
+          console.error('Error during POST request:', error);
+        });
+      });
+
       setIsUploadSuccess(true);
-      setUploadFile(null);
-    });    
+    });
   };
 
   return (

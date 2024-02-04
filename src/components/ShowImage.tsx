@@ -1,39 +1,58 @@
-import { getDownloadURL, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
-import { storage } from "../firebaseConfig";
 import { useParams } from "react-router-dom";
 import { ImageCropper } from "./";
+import { WallpaperType } from "./WallpaperImage";
 
 const ShowImage = () => {
-  const [wallpaper, setWallpaper] = useState<string>();
+  const [wallpaper, setWallpaper] = useState<WallpaperType>();
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
-//   const navigate = useNavigate();
 
-  const fetchImage = async () => {
-    const storageRef = ref(storage, `images/${id}`);
-    try {
-      const url = await getDownloadURL(storageRef);
-      setWallpaper(url);
-    } catch (error) {
-      console.error("Error fetching image:", error);
-    }
+  const fetchImageUrl = "https://wallpaper-wizard-backend.onrender.com/api/wallpaper/get-wallpaper-by-id";
+
+  const fetchImage = () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    fetch(`${fetchImageUrl}/${id}`, requestOptions)
+      .then((response) => {
+        if (!response.ok) {
+          return console.log("error fetching the data");
+        }
+        return response.json();
+      })
+      .then((data: WallpaperType) => {
+        setWallpaper(data)
+      });
   };
 
   const handleDownloadImage = (url: string | undefined) => {
-    if (!url) {
-      alert("Image URL is not available.");
-      return;
-    }
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "download.jpeg";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (!url) return;
+    const xhr = new XMLHttpRequest();
+    debugger
+  
+    xhr.responseType = 'blob';
+  
+    xhr.onload = () => {
+      const blob = xhr.response;
+  
+      const downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = 'Wallpaper-Wizard.jpeg';
+      downloadLink.click();
+    };
+  
+    xhr.onerror = () => {
+      console.error('Image download failed.');
+    };
+  
+    xhr.open('GET', url);
+    xhr.send();
   };
-
+  
   useEffect(() => {
     fetchImage();
   }, []);
@@ -43,10 +62,11 @@ const ShowImage = () => {
       <div className="mt-3 px-4 flex flex-col">
         {wallpaper && (
           <img
-            src={wallpaper}
-            alt={"image"}
+            src={wallpaper.imageUri}
+            alt={wallpaper.title}
             width={800}
             onLoad={() => setLoading(false)}
+            
           />
         )}
         {!loading ? (
@@ -56,14 +76,14 @@ const ShowImage = () => {
             </button>
             <button
               className="border px-3 h-12 rounded-md bg-blue-600 text-slate-200"
-              onClick={() => handleDownloadImage(wallpaper)}
+              onClick={() => handleDownloadImage(wallpaper?.imageUri)}
             >
               Download Wallpaper
             </button>
             <button
               className="border px-3 h-12 rounded-md bg-orange-600 text-slate-200"
               onClick={() => {
-                <ImageCropper src={wallpaper}/>
+                <ImageCropper src={wallpaper?.imageUri}/>
             }}
             >
               Crop Wallpaper
