@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { SearchContext } from "../UploadContext";
 
 export type WallpaperType = {
   title: string;
@@ -9,19 +10,27 @@ export type WallpaperType = {
 
 const WallpaperImage = () => {
   const fetchImageUrl = "https://wallpaper-wizard-backend.onrender.com/api/wallpaper/get-wallpapers";
-
   const [files, setFiles] = useState<WallpaperType[]>([]);
-
+  const [loading, setLoading] = useState(true);
+  const pageNumber = 0;
+  const { searchString } = useContext(SearchContext);
   const navigate = useNavigate();
 
   const fetchImage = () => {
+
+    const searchObject = {
+      pageNumber: pageNumber,
+      searchString: searchString
+    };
+
     const requestOptions = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({}),
+      body: JSON.stringify(searchObject),
     };
+
     fetch(fetchImageUrl, requestOptions)
       .then((response) => {
         if (!response.ok) {
@@ -30,28 +39,37 @@ const WallpaperImage = () => {
         return response.json();
       })
       .then((data: WallpaperType[]) => {
-        setFiles(data)
+        setFiles(data);
+        setLoading(false);
       });
   };
 
   useEffect(() => {
     fetchImage();
-  }, []);
+  }, [searchString]);
 
   return (
-    <div className="grid gap-3 lg:grid-cols-3 md:grid-cols-2 small:grid-cols-3 m-7">
-      {files.map((file) => (
-        <div key={file._id} className="flex flex-col items-center">
-          <img
-            src={file.imageUri}
-            alt="image"
-            className="cursor-pointer w-full h-64 bg-blue-300"
-            onClick={()=> navigate(`/show-image/${file._id}`)}
-          />
-          <span className="mt-2 p-2">{file.title}</span>
+    <>
+      {loading ? (
+        <div className="justify-center flex mt-5 h-16">
+          <img src="/assets/loader.svg" alt="Loading..." className="invert h-full" />
         </div>
-      ))}
-    </div>
+      ) : (
+        <div className="grid gap-3 lg:grid-cols-3 md:grid-cols-2 small:grid-cols-3 m-7">
+          {files.map((file) => (
+            <div key={file._id} className="flex flex-col items-center">
+              <img
+                src={file.imageUri}
+                alt="image"
+                className="cursor-pointer w-full h-64 bg-blue-300"
+                onClick={() => navigate(`/show-image/${file._id}`)}
+              />
+              <span className="mt-2 p-2">{file.title}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 

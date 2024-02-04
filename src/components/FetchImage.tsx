@@ -1,7 +1,6 @@
 import { getDownloadURL, list, ref } from "firebase/storage";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { storage } from "../firebaseConfig";
-import { UploadContext } from "../UploadContext";
 import { useNavigate } from "react-router-dom";
 
 type FileToUrl = {
@@ -12,7 +11,6 @@ type FileToUrl = {
 
 const FetchImage = () => {
   const [files, setFiles] = useState<FileToUrl[]>([]);
-  const {isUploadSuccess, setIsUploadSuccess} = useContext(UploadContext);
   const navigate =  useNavigate();
 
   const fetchFile = async () => {
@@ -27,12 +25,12 @@ const FetchImage = () => {
       }))
     );
     setFiles(currentFile);
-    setIsUploadSuccess(false);
+    // setIsUploadSuccess(false);
   };
 
   useEffect(()=>{
     fetchFile();
-  },[isUploadSuccess]);
+  },[]);
 
   return (
     <>

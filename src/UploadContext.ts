@@ -1,9 +1,10 @@
 import { Dispatch, SetStateAction, createContext } from "react";
 
-export const UploadContext = createContext<{
-  isUploadSuccess: boolean;
-  setIsUploadSuccess: Dispatch<SetStateAction<boolean>>;
+export const SearchContext = createContext<{
+  searchString: string;
+  setSearchString: Dispatch<SetStateAction<string>>;
 }>({
-  isUploadSuccess: false,
-  setIsUploadSuccess: () => {},
+  searchString: "",
+  setSearchString: () => {},
 });
+

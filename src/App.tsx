@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { UploadContext } from "./UploadContext";
+import { SearchContext } from "./UploadContext";
 import { Route, Routes } from "react-router-dom";
-import { NavBar, FetchImage, UploadWallpaper, ShowImage } from "./components";
+import { NavBar, UploadWallpaper, ShowImage } from "./components";
 import WallpaperImage from "./components/WallpaperImage";
 
 function App() {
-  const [isUploadSuccess, setIsUploadSuccess] = useState(false);
+  const [searchString, setSearchString] = useState("");
   return (
     <>
-      <UploadContext.Provider value={{ isUploadSuccess, setIsUploadSuccess }}>
+      <SearchContext.Provider value={{ searchString, setSearchString }}>
         <NavBar />
         <Routes>
           <Route path="/" element={<WallpaperImage />} />
@@ -18,10 +18,9 @@ function App() {
             )
           }
           <Route path="/show-image/:id" element={<ShowImage />} />
-          <Route path="*" element={<FetchImage />} />
+          <Route path="*" element={<WallpaperImage />} />
         </Routes>
-        {/* <WallpaperImage/> */}
-      </UploadContext.Provider>
+      </SearchContext.Provider>
     </>
   );
 }
