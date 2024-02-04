@@ -3,7 +3,6 @@ import ReactCrop, {
   makeAspectCrop,
   type Crop,
   centerCrop,
-  convertToPercentCrop,
   convertToPixelCrop,
 } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
