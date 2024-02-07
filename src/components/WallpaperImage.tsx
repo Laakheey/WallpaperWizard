@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SearchContext } from "../UploadContext";
-// import Footer from "./Footer";
 
 export type WallpaperType = {
   title: string;
@@ -14,16 +13,18 @@ const WallpaperImage = () => {
   const [files, setFiles] = useState<WallpaperType[]>([]);
   const [loading, setLoading] = useState(true);
   const [_, setHasMore] = useState(true);
-  const [pageNumber, setPageNumber] = useState(0);
-  // const pageNumber = 0;
+  const [pageNumber, __] = useState(0);
   const { searchString } = useContext(SearchContext);
   const navigate = useNavigate();
+
 
   const fetchImage = () => {
     const searchObject = {
       pageNumber: pageNumber,
       searchString: searchString
     };
+    console.log(searchObject);
+    
     setLoading(true);
     const requestOptions = {
       method: "POST",
@@ -40,13 +41,12 @@ const WallpaperImage = () => {
         }
         return response.json();
       })
-      .then((data) => {
+      .then((data: WallpaperType[]) => {
         if (data.length === 0) {
           setHasMore(false);
         } else {
-          setFiles((prevFiles) => [...prevFiles, ...data]);
-          
-          setPageNumber((prevPageNumber) => prevPageNumber + 1);
+          // setFiles((prevFiles) => [...prevFiles, ...data]);
+          setFiles(data)
         }
       })
       .finally(() => {
@@ -54,22 +54,10 @@ const WallpaperImage = () => {
       });
   };
 
-  const handelInfiniteScroll = async () => {
-    try {
-      console.log('hyy');
-      
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   useEffect(() => {
     fetchImage();
   }, [searchString]);
 
-  useEffect(() => {
-    document.addEventListener("scroll", handelInfiniteScroll)
-  }, [])
 
   return (
     <>
@@ -92,7 +80,6 @@ const WallpaperImage = () => {
           ))}
         </div>
       )}
-      {/* <Footer/> */}
     </>
   );
 };
