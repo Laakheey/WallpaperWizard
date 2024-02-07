@@ -1,9 +1,10 @@
 import 'react-image-crop/dist/ReactCrop.css'
-import { useState } from "react";
+import React, { useState } from "react";
 import { SearchContext } from "./UploadContext";
 import { Route, Routes } from "react-router-dom";
 import { NavBar, UploadWallpaper, ShowImage, ImageCropper } from "./components";
-import WallpaperImage from "./components/WallpaperImage";
+
+const HomePage = React.lazy(() => import('./components/WallpaperImage'))
 
 function App() {
   const [searchString, setSearchString] = useState("");
@@ -12,7 +13,7 @@ function App() {
       <SearchContext.Provider value={{ searchString, setSearchString }}>
         <NavBar />
         <Routes>
-          <Route path="/" element={<WallpaperImage />} />
+          <Route path="/" element={<HomePage />} />
           {
             localStorage.getItem('admin') && (
               <Route path="/upload-wallpaper"  element={<UploadWallpaper />} />
@@ -20,7 +21,6 @@ function App() {
           }
           <Route path="/show-image/:id" element={<ShowImage />} />
           <Route path="/crop-wallpaper/:id" element={<ImageCropper/>} />
-          <Route path="*" element={<WallpaperImage />} />
         </Routes>
       </SearchContext.Provider>
     </>
